@@ -1,6 +1,17 @@
 {
   "name": "@a7medalhadi/waba-interface",
   "version": "1.0.0",
+  "description": "A simple, clean TypeScript library for WhatsApp Business API (Cloud API) - send messages, manage templates, flows, media, and more",
+  "keywords": [
+    "whatsapp",
+    "whatsapp-business",
+    "whatsapp-api",
+    "cloud-api",
+    "messaging",
+    "waba",
+    "typescript"
+  ],
+  "author": "Ahmed Al-Hadi <ahmedalhadi7.aa@gmail.com>",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,6 +19,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/a7medalhadi/waba-interface"
+  },
+  "homepage": "https://github.com/a7medalhadi/waba-interface#readme",
+  "bugs": {
+    "url": "https://github.com/a7medalhadi/waba-interface/issues"
   },
   "scripts": {
     "build": "tsc",
