@@ -1,0 +1,5 @@
+{
+    "typescript.autoImportSuggestions.enabled": true,
+    "javascript.autoImportSuggestions.enabled": true
+  }
+  

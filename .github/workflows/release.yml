@@ -1,0 +1,86 @@
+name: Release Tag
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch the full history, including all tags.
+
+      - name: Get previous tag
+        id: previous_tag
+        run: |
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0)
+          echo "PREVIOUS_TAG=${PREVIOUS_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Set Git user identity
+        run: |
+          git config --global user.email "ahmedalhadi7.aa@gmail.com"
+          git config --global user.name "Haadi"
+
+      - name: Create new tag
+        id: create_tag
+        run: |
+          # Remove any leading "v" if present
+          previous_tag=${{ steps.previous_tag.outputs.PREVIOUS_TAG }}
+          previous_tag=${previous_tag#v}
+
+          # Split version into major, minor, patch parts
+          IFS='.' read -r major minor patch <<< "$previous_tag"
+
+          # Increment version:
+          # - If patch is less than 9, increment patch.
+          # - Otherwise, increment minor and reset patch to 0.
+          if [ "$patch" -lt 9 ]; then
+            patch=$((patch + 1))
+          else
+            minor=$((minor + 1))
+            patch=0
+          fi
+
+          # New version string (adjust prefix if desired)
+          new_version="${major}.${minor}.${patch}"
+          echo "Creating new tag: $new_version"
+          git tag -a "$new_version" -m "Auto generated tag"
+
+          # Set the new tag as an output variable
+          echo "NEW_TAG=${new_version}" >> $GITHUB_OUTPUT
+
+      - name: Push new tag
+        run: git push origin --tags
+
+      - name: Create draft GitHub release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.create_tag.outputs.NEW_TAG }}
+          release_name: "Release ${{ steps.create_tag.outputs.NEW_TAG }}"
+          prerelease: false
+
+      - name: Update package.json version
+        run: |
+          # Use npm version with --no-git-tag-version to update package.json without creating a commit.
+          npm version "${{ steps.create_tag.outputs.NEW_TAG }}" --no-git-tag-version
+
+      - name: Setup Node.js and npm registry
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Publish package
+        run: yarn publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    // "emitDeclarationOnly": true,
+    "target": "ES2022",                   // Use latest ECMAScript version
+    "module": "NodeNext",                   // Use ES modules
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,                       // Enable strict type checking
+    "declaration": true,                  // Generate type definitions
+    "outDir": "./dist",                   // Output directory for compiled JS files
+    "rootDir": "./src",                   // Source directory
+    "forceConsistentCasingInFileNames": true,
+    "declarationDir": "./dist", 
+    "declarationMap": true,               // Optional: Generates source maps for declarations
+    "sourceMap": true,
+    "baseUrl": "./",                      // Base directory for resolving non-relative module names
+    // "paths": {
+    //   "@/*": ["src/*"]                    // Map @ to the src directory
+    // }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
